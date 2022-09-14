@@ -71,11 +71,11 @@ public class ABrowserController implements Initializable {
 		int index = tabPane.getSelectionModel().getSelectedIndex();
 		tabPane.getSelectionModel().select(index + 1);
 		index = tabPane.getSelectionModel().getSelectedIndex();
-		if (index == tabPane.getTabs().size()-1) {
+		if (index == tabPane.getTabs().size() - 1) {
 			btnNext.setDisable(true);
 		}
-	
 		btnBack.setDisable(false);
+		repeat();
 	}
 
 	@FXML
@@ -86,6 +86,7 @@ public class ABrowserController implements Initializable {
 		}
 		btnNext.setDisable(false);
 		tabPane.getSelectionModel().select(index - 1);
+		repeat();
 	}
 
 	@Override
@@ -94,24 +95,11 @@ public class ABrowserController implements Initializable {
 		btnBack.setDisable(true);
 		btnNext.setDisable(true);
 		tabPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
 			@Override
 			public void handle(MouseEvent event) {
 				if (Tabs.getTabsList() != null) {
 					if (tabPane.getSelectionModel().getSelectedItem() != null) {
-						for (Tabs tabs : Tabs.getTabsList()) {
-							if (tabPane.getSelectionModel().getSelectedItem() == tabs.getTab()) {
-								currentWebView = tabs.getWebView();
-								currentWebEngine = currentWebView.getEngine();
-								Entry currentEntry = currentWebView.getEngine().getHistory().getEntries().get(0);
-								tfURL.setText(currentEntry.getUrl().substring(12).replaceAll("/", ""));
-								if (!currentEntry.getTitle().equals(""))
-									stage.setTitle(currentEntry.getTitle());
-								else
-									stage.setTitle(
-											currentEntry.getUrl().substring(12).replaceAll(".com/", "").toUpperCase());
-							}
-						}
+						repeat();
 						if (tabPane.getSelectionModel().getSelectedIndex() == 0)
 							btnBack.setDisable(true);
 						else
@@ -125,6 +113,21 @@ public class ABrowserController implements Initializable {
 				}
 			}
 		});
+	}
+
+	void repeat() {
+		for (Tabs tabs : Tabs.getTabsList()) {
+			if (tabPane.getSelectionModel().getSelectedItem() == tabs.getTab()) {
+				currentWebView = tabs.getWebView();
+				currentWebEngine = currentWebView.getEngine();
+				Entry currentEntry = currentWebView.getEngine().getHistory().getEntries().get(0);
+				tfURL.setText(currentEntry.getUrl().substring(12).replaceAll("/", ""));
+				if (!currentEntry.getTitle().equals(""))
+					stage.setTitle(currentEntry.getTitle());
+				else
+					stage.setTitle(currentEntry.getUrl().substring(12).replaceAll(".com/", "").toUpperCase());
+			}
+		}
 	}
 
 	void loadURL(String URL) {
